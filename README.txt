@@ -12,3 +12,6 @@ say how many hours I spent on it
 
 Source of data:
 http://blog.yhat.com/posts/7-funny-datasets.html
+
+Use of example graph:
+http://bl.ocks.org/mbostock/4062085
