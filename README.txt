@@ -1,7 +1,8 @@
 Jake Martin
 
 todo:
-decide how I want to represent data by going through d3 examples
+Add javascript rendered chopsticks that change length based on what length in the graph you're looking at
+Add key/legend
 draft a simple storyboard and/or wizard-of-oz this interaction and take pictures
 Implement that visualization artifact in D3
 Write a short review of the tool. How quick was the installation and learning to use the tool? What resources were most useful? What sorts of applications/datasets are most appropriate for this tool? What are the limitations of this tool? What are some suggestions/cautions to others who consider using this tool?
