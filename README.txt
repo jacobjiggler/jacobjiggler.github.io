@@ -1,5 +1,9 @@
 Jake Martin
 
+
+I tried initially to rewrite this graph to work with my data, and realized it was completely written around specific years being passed in one at a time. http://bl.ocks.org/mbostock/4062085
+Because of this, I decided to start from scratch and write my own bar graph. I would then add pieces I wanted from the other graphs I liked.
+
 todo:
 Add javascript rendered chopsticks that change length based on what length in the graph you're looking at
 Add key/legend

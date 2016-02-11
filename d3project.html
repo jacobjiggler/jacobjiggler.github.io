@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Jake Martin D3</title>
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+#work_queues_chart div {
+    font-size: 0.5em;
+    font-family: sans-serif;
+    color: white;
+    background-color: steelblue;
+    text-align: right;
+    padding: 0.5em;
+    margin: 0.2em;
+}
+
+</style>
+<body>
+  <h1> Jake Martin Project</h1>
+  <script src="d3.min.js" charset="utf-8"></script>
+
+  <div id="work_queues_chart" />
+<button id="update">Update</button>
+<script>
+function draw(data) {
+  var scale = d3.scale.linear()
+      .domain([0, 35])
+      .range([0, 300]);
+
+  var bars = d3.select("#work_queues_chart")
+      .selectAll("div")
+      .attr("id","work_queues_chart")
+      .data(data);
+
+  // enter selection
+  bars
+      .enter().append("div");
+
+  // update selection
+  bars
+      .style("width", function (d) {return scale(d) + "%";})
+      .text(function (d) {return d;});
+
+  // exit selection
+  bars
+      .exit().remove();
+};
+
+function update() {
+  console.log("here");
+  var data = [4, 8, 15, 16, 23, 42];
+  draw(data);
+};
+
+var data = [10, 10, 10, 10, 10, 10];
+window.onload = draw(data);
+
+d3.select('#update')
+  .on("click",update);
+</script>
+</body>
+
+</html>
