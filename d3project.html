@@ -20,11 +20,23 @@ body {
     font-family: sans-serif;
     font-size: 11px;
 }
+
+.title {
+  font: 300 78px Helvetica Neue;
+  fill: #666;
+}
+
+.avg {
+  font: 60 11px sans-serif;
+  text-anchor: middle;
+}
+
 </style>
 <body>
-  <h1> Jake Martin Project</h1>
+  <h1> Chopstick Efficiency by Length</h1>
   <script src="d3.min.js" charset="utf-8"></script>
   <div id="chopstick_chart" />
+
 
 <script>
 //Width and height
@@ -50,20 +62,34 @@ body {
                       .orient("right")
                       .ticks(10);
 
+  poly = [{"x":0.0, "y":24.5},
+          {"x":0,"y":22.5},
+          {"x":40,"y":23.0},
+          {"x":40,"y":24.0},
 
+          ];
+
+  poly2 = [{"x":0.0, "y":20.5},
+          {"x":0,"y":18.5},
+          {"x":40,"y":19.0},
+          {"x":40,"y":20.0}];
   var temp = [];
+  var efficiency = [];
   d3.csv("chopstick-reformatted2.csv", function(error, data) {
     var i = 0;
     var a = [];
+    efficiency  = Array.apply(null, Array(6)).map(Number.prototype.valueOf,0);
     data.forEach(function(d) {
       d.efficiency = +d.efficiency;
       d.chopLength = +d.chopLength;
       d.individual = +d.individual;
+      efficiency[Math.floor(i/31)]+=d.efficiency
       a.push(d);
       i++;
       if ((i % 31) == 0){
         temp.push(a);
         a = [];
+        efficiency[i/31 - 1] = Math.floor(efficiency[i/31 - 1]/31)
       }
     });
     init();
@@ -71,10 +97,24 @@ body {
 
   function init() {
             //Create SVG element
-  	var svg = d3.select("body")
+  	var svg = d3.select("#chopstick_chart")
   				.append("svg")
   				.attr("width", w + 180)
   				.attr("height", h + 180);
+          // A label for the current chopLength.
+    var title = svg.append("text")
+        .attr("class", "title")
+        .attr("y", 70)
+        .attr("x", 150)
+        .text(180 + "mm");
+
+
+    var avg = svg.append("text")
+        .attr("class", "avg")
+        .attr("y", h + 50)
+        .attr("x", w - 100)
+        .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
+
   	svg.selectAll("rect")
         .data(temp[stickIndex])
   	   .enter()
@@ -90,7 +130,7 @@ body {
   	   		return d.efficiency * 8;
   	   })
   	   .attr("fill", function(d) {
-  			return "hsl(319, 69%, " + ((d.efficiency - 7) * 4) + "%)";
+  			return "hsl(319, 69%, " + ((d.efficiency - 5) * 3.1) + "%)";
   	   });
 
   	svg.selectAll("text")
@@ -130,28 +170,53 @@ body {
          .attr("class", "axis")
          .attr("transform", "translate(" + (w +70) + ",0)")
          .call(yAxis);
+
+         svg.selectAll("polygon")
+       .data([poly,poly2])
+     .enter().append("polygon")
+       .attr("points",function(d) {
+           return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
+       .attr("stroke","grey")
+       .attr("fill", "white")
+       .attr("stroke-width",2);
+
        // Allow the arrow keys to change the displayed chopLength.
        window.focus();
        d3.select(window).on("keydown", function() {
          switch (d3.event.keyCode) {
-           case 37: stickIndex--; redraw(svg); break;
-           case 39: stickIndex++; redraw(svg); break;
+           case 37: stickIndex--; redraw(svg,title,avg); break;
+           case 39: stickIndex++; redraw(svg,title,avg); break;
          }
 
        });
 
      };
-     function redraw(svg) {
+     function redraw(svg,title,avg) {
        if (stickIndex < 0){
          stickIndex = 0;
        }
        if (stickIndex > 5){
          stickIndex = 5;
        }
+       title
+        .transition()
+        .duration(250)
+        .text((temp[stickIndex][0]).chopLength + "MM")
+        .attr("y", 70)
+        .attr("x", 150);
+
+        avg
+          .transition()
+          .duration(250)
+          .attr("class", "avg")
+          .attr("y", h + 50)
+          .attr("x", w - 100)
+          .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
+
        svg.selectAll("rect")
        .data(temp[stickIndex])
      	   .attr("x", function(d, i) {
-     	   		return i * (w / datasetLength);
+     	   		return i * (w / datasetLength)  + 60;
      	   })
      	   .attr("y", function(d) {
      	   		return h - (d.efficiency * 8);
@@ -161,7 +226,7 @@ body {
      	   		return d.efficiency * 8;
      	   })
      	   .attr("fill", function(d) {
-            return "hsl(319, 69%, " + ((d.efficiency - 7) * 4) + "%)";
+            return "hsl(319, 69%, " + ((d.efficiency - 5) * 3.1) + "%)";
      	   });
 
      	svg.selectAll("text")
@@ -171,7 +236,7 @@ body {
      	   })
      	   .attr("text-anchor", "middle")
      	   .attr("x", function(d, i) {
-     	   		return i * (w / datasetLength) + (w / datasetLength - barPadding) / 2;
+     	   		return i * (w / datasetLength) + (w / datasetLength - barPadding) / 2 + 60;
      	   })
      	   .attr("y", function(d) {
      	   		return h + 12;
@@ -182,6 +247,11 @@ body {
    };
 
   </script>
+  <div>
+  <p>
+    This graph shows the efficiency of different chopstick lengths. To see results at different lengths use the left and right arrows.
+  </p>
+</div>
 </body>
 
 </html>
