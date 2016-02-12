@@ -62,17 +62,17 @@ body {
                       .orient("right")
                       .ticks(10);
 
-  poly = [{"x":0.0, "y":24.5},
-          {"x":0,"y":22.5},
-          {"x":40,"y":23.0},
-          {"x":40,"y":24.0},
+  poly = [{"x":65, "y":34.5},
+          {"x":65,"y":32.5},
+          {"x":105+ 40*(stickIndex/5),"y":33.0},
+          {"x":105 + 40*(stickIndex/5),"y":34.0},
 
           ];
 
-  poly2 = [{"x":0.0, "y":20.5},
-          {"x":0,"y":18.5},
-          {"x":40,"y":19.0},
-          {"x":40,"y":20.0}];
+  poly2 = [{"x":65, "y":30.5},
+          {"x":65,"y":28.5},
+          {"x":105,"y":29.0},
+          {"x":105,"y":30.0}];
   var temp = [];
   var efficiency = [];
   d3.csv("chopstick-reformatted2.csv", function(error, data) {
@@ -177,7 +177,7 @@ body {
        .attr("points",function(d) {
            return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
        .attr("stroke","grey")
-       .attr("fill", "white")
+       .attr("fill", "#FFCC99")
        .attr("stroke-width",2);
 
        // Allow the arrow keys to change the displayed chopLength.
@@ -198,6 +198,20 @@ body {
        if (stickIndex > 5){
          stickIndex = 5;
        }
+
+       poly = [{"x":65, "y":34.5},
+               {"x":65,"y":32.5},
+               {"x":105+ 40*(stickIndex/5),"y":33.0},
+               {"x":105 + 40*(stickIndex/5),"y":34.0},
+
+               ];
+
+       poly2 = [{"x":65, "y":30.5},
+               {"x":65,"y":28.5},
+               {"x":105+ 40*(stickIndex/5),"y":29.0},
+               {"x":105+ 40*(stickIndex/5),"y":30.0}];
+
+
        title
         .transition()
         .duration(250)
@@ -244,6 +258,14 @@ body {
      	   .attr("font-family", "sans-serif")
      	   .attr("font-size", "11px")
      	   .attr("fill", "black");
+
+          svg.selectAll("polygon")
+        .data([poly,poly2])
+        .attr("points",function(d) {
+            return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
+        .attr("stroke","grey")
+        .attr("fill", "#FFCC99")
+        .attr("stroke-width",2);
    };
 
   </script>
