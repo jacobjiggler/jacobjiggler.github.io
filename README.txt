@@ -1,22 +1,17 @@
-Jake Martin
 
 
-I tried initially to rewrite this graph to work with my data, and realized it was completely written around specific years being passed in one at a time. http://bl.ocks.org/mbostock/4062085
-Because of this, I decided to start from scratch and write my own bar graph. I would then add pieces I wanted from the other graphs I liked.
+What I want to do
 
-todo:
-Add javascript rendered chopsticks that change length based on what length in the graph you're looking at
-Add key/legend
-draft a simple storyboard and/or wizard-of-oz this interaction and take pictures
-Implement that visualization artifact in D3
-Write a short review of the tool. How quick was the installation and learning to use the tool? What resources were most useful? What sorts of applications/datasets are most appropriate for this tool? What are the limitations of this tool? What are some suggestions/cautions to others who consider using this tool?
-Make sure the code you wrote is clearly labeled. And that code you borrowed from others (with or without modification) is appropriately labeled and cited.
-say how many hours I spent on it
+Fix the transitions
+Fix the numbers flying across the screen
+Change the scale to start at 10 to give perspective of change
+Try unsorted
+modify the colors
+  Shades of grey
+  Black & white
+  Cool vs. warm tones
+  Bold/saturated vs. pastel colors
+  Colorblind aware
+  Light vs. dark background and/or color negation
 
-
-
-Source of data:
-http://blog.yhat.com/posts/7-funny-datasets.html
-
-Use of example graph:
-http://bl.ocks.org/mbostock/4062085
+As we learned in the colorbrewer paper, darker means more. I will be flipping the colors going from dark to light so that higher numbers bars are darker

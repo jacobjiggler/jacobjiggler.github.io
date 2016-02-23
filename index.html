@@ -75,7 +75,7 @@ body {
           {"x":105,"y":30.0}];
   var temp = [];
   var efficiency = [];
-  d3.csv("chopstick-reformatted2.csv", function(error, data) {
+  d3.csv("chopstick-reformatted3.csv", function(error, data) {
     var i = 0;
     var a = [];
     efficiency  = Array.apply(null, Array(6)).map(Number.prototype.valueOf,0);
@@ -123,14 +123,15 @@ body {
   	   		return i * (w / datasetLength) + 60;
   	   })
   	   .attr("y", function(d) {
-  	   		return h - (d.efficiency * 8);
+  	   		return h - (d.efficiency * 11);
   	   })
   	   .attr("width", w / datasetLength - barPadding)
   	   .attr("height", function(d) {
-  	   		return d.efficiency * 8;
+  	   		return d.efficiency * 11;
   	   })
   	   .attr("fill", function(d) {
-  			return "hsl(319, 69%, " + ((d.efficiency - 5) * 3.1) + "%)";
+         console.log(81 - ((d.efficiency - 5) * 1.5))
+  			return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
   	   });
 
   	svg.selectAll("text")
