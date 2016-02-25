@@ -64,8 +64,6 @@
                           <p>
                             This graph shows the efficiency of different chopstick lengths. <b>To see results at different lengths use the buttons below or left and right arrows.</b>
                             Efficiency was measured by amount of peanuts picked up and dropped in a cup.
-                          </br>
-                          Props to pure.css for the layout and button css
                           </p>
                         </div>
 
@@ -80,22 +78,22 @@
                           var barPadding = 1;
 
                           var stickIndex = 0;
-                          var datasetLength = 31;
+                          var datasetLength = 6;
 
 
-                            var barWidth = Math.floor(w / 31) - 1;
+                            var barWidth = Math.floor(w / 6) - 1;
                             var xScale = d3.scale.linear()
                                 .range([barWidth / 2, w - barWidth / 2]);
 
                             var yScale = d3.scale.linear()
                                 .range([h, 10])
-                                .domain([10,40]);
+                                .domain([0,16]);
 
                                 //Define Y axis
                             var yAxis = d3.svg.axis()
                                               .scale(yScale)
                                               .orient("right")
-                                              .ticks(20);
+                                              .ticks(8);
 
                           poly = [{"x":65, "y":39.5},
                                   {"x":65,"y":37.5},
@@ -110,6 +108,10 @@
                                   {"x":105,"y":36.0}];
                           var temp = [];
                           var efficiency = [];
+                          var sums = [];
+                          for (i = 0; i < 6; i++) {
+                              sums.push([0,0,0,0,0,0])
+                          }
                           d3.csv("chopstick-reformatted3.csv", function(error, data) {
                             var i = 0;
                             var a = [];
@@ -119,6 +121,7 @@
                               d.chopLength = +d.chopLength;
                               d.individual = +d.individual;
                               efficiency[Math.floor(i/31)]+=d.efficiency
+                              sums[Math.floor(i/31)][Math.floor((d.efficiency - 14) / 4)]+=1
                               a.push(d);
                               i++;
                               if ((i % 31) == 0){
@@ -154,29 +157,32 @@
                                 .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
 
                             svg.selectAll("rect")
-                                .data(temp[stickIndex])
+                                .data(sums[stickIndex])
                                .enter()
                                .append("rect")
                                .attr("x", function(d, i) {
-                                   return i * (w / datasetLength) + 60;
+                                   return i * (w / 6) + 60;
                                })
                                .attr("y", function(d) {
-                                   return h - ((d.efficiency - 10) * 14);
+                                   return h - d * 25;
                                })
                                .attr("width", w / datasetLength - barPadding)
                                .attr("height", function(d) {
-                                   return (d.efficiency - 10) * 14;
+                                   return d * 25;
                                })
                                .attr("fill", function(d) {
-                                return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
+                                return "hsl(319, 69%, " + (90 - d*4) + "%)";
                                });
 
                             svg.selectAll("text")
-                                .data(temp[stickIndex])
+                                .data(sums)
                                .enter()
                                .append("text")
-                               .text(function(d) {
-                                   return d.individual;
+                               .text(function(d,i) {
+                                 temp1 = (i * 4 + 14).toString();
+                                 temp1 = temp1.concat(" - ");
+                                 temp1 = temp1.concat((i * 4 + 17).toString());
+                                   return (temp1);
                                })
                                .attr("text-anchor", "middle")
                                .attr("x", function(d, i) {
@@ -193,17 +199,17 @@
                                    .attr("x", w + 130 )
                                    .attr("y",  200 )
                                    .style("text-anchor", "middle")
-                                   .text("Chopstick");
+                                   .text("# of");
                                svg.append("text")      // text label for the y axis
                                    .attr("x", w + 130 )
                                    .attr("y",  220 )
                                    .style("text-anchor", "middle")
-                                   .text("Efficiency");
+                                   .text("Individuals");
                                  svg.append("text")      // text label for the x axis
                                      .attr("x", w / 2 + 30)
                                      .attr("y",  h + 50 )
                                      .style("text-anchor", "middle")
-                                     .text("Test Subject #");
+                                     .text("Distribution");
                                var yAxisGroup = svg.append("g")
                                  .attr("class", "axis")
                                  .attr("transform", "translate(" + (w +70) + ",0)")
@@ -256,25 +262,28 @@
 
 
                                svg.selectAll("rect")
-                               .data(temp[stickIndex])
+                               .data(sums[stickIndex])
                                   .attr("x", function(d, i) {
                                       return i * (w / datasetLength)  + 60;
                                   })
                                   .attr("y", function(d) {
-                                      return h - ((d.efficiency - 10) * 14);
+                                      return h - d * 25;
                                   })
                                   .attr("width", w / datasetLength - barPadding)
                                   .attr("height", function(d) {
-                                      return (d.efficiency - 10) * 14;
+                                      return d*25;
                                   })
                                   .attr("fill", function(d) {
-                                    return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
+                                    return "hsl(319, 69%, " + (90 - d*4) + "%)";
                                   });
 
                                svg.selectAll("text")
-                               .data(temp[stickIndex])
-                                  .text(function(d) {
-                                      return d.individual;
+                               .data(sums)
+                                  .text(function(d, i) {
+                                    temp1 = (i * 4 + 14).toString();
+                                    temp1 = temp1.concat(" - ");
+                                    temp1 = temp1.concat((i * 4 + 17).toString());
+                                      return (temp1);
                                   })
                                   .attr("text-anchor", "middle")
                                   .attr("x", function(d, i) {
