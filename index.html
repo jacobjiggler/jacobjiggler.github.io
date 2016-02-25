@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div class="content pure-u-1 pure-u-md-3-4">
+    <div class="content pure-u-1 pure-u-md-3-4" >
         <div>
             <div class="posts">
                 <section class="post">
@@ -79,7 +79,7 @@
 
                           var stickIndex = 0;
                           var datasetLength = 6;
-
+                          var colorbrewer = ['#d73027','#fc8d59','#fee090','#e0f3f8','#91bfdb','#4575b4']
 
                             var barWidth = Math.floor(w / 6) - 1;
                             var xScale = d3.scale.linear()
@@ -112,6 +112,7 @@
                           for (i = 0; i < 6; i++) {
                               sums.push([0,0,0,0,0,0])
                           }
+                          var texts;
                           d3.csv("chopstick-reformatted3.csv", function(error, data) {
                             var i = 0;
                             var a = [];
@@ -143,18 +144,6 @@
                                   .attr("width", w + 180)
                                   .attr("height", h + 180);
                                   // A label for the current chopLength.
-                            title = svg.append("text")
-                                .attr("class", "title")
-                                .attr("y", 70)
-                                .attr("x", 0)
-                                .text(180 + "MM");
-
-
-                            avg = svg.append("text")
-                                .attr("class", "avg")
-                                .attr("y", h + 50)
-                                .attr("x", w - 100)
-                                .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
 
                             svg.selectAll("rect")
                                 .data(sums[stickIndex])
@@ -170,8 +159,8 @@
                                .attr("height", function(d) {
                                    return d * 25;
                                })
-                               .attr("fill", function(d) {
-                                return "hsl(319, 69%, " + (90 - d*4) + "%)";
+                               .attr("fill", function(d, i) {
+                                return colorbrewer[i];
                                });
 
                             svg.selectAll("text")
@@ -194,6 +183,19 @@
                                .attr("font-family", "sans-serif")
                                .attr("font-size", "11px")
                                .attr("fill", "black");
+
+                               title = svg.append("text")
+                                   .attr("class", "title")
+                                   .attr("y", 70)
+                                   .attr("x", 0)
+                                   .text(180 + "MM");
+
+
+                               avg = svg.append("text")
+                                   .attr("class", "avg")
+                                   .attr("y", h + 50)
+                                   .attr("x", w - 100)
+                                   .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
 
                                svg.append("text")      // text label for the y axis
                                    .attr("x", w + 130 )
