@@ -1,14 +1,19 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<title>Jake Martin D3</title>
-<style>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: auto;
-  position: relative;
-  width: 960px;
-}
+<title>Jake Martin D3</title>
+
+
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+<script src="d3.min.js" charset="utf-8"></script>
+
+      <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+        <link rel="stylesheet" href="css/layouts/blog.css">
+<style>
 .axis path,
 .axis line {
     fill: none;
@@ -30,275 +35,316 @@ body {
   font: 60 11px sans-serif;
   text-anchor: middle;
 }
-
 </style>
+</head>
 <body>
 
+<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+        <div class="header">
+            <h1 class="brand-title">Fun with Chopsticks</h1>
+            <h2 class="brand-tagline">Dynamic D3 Graph showing Chopstick Efficiency by Length</h2>
+        </div>
+    </div>
 
-  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-  <h1> Chopstick Efficiency by Length</h1>
-  <script src="d3.min.js" charset="utf-8"></script>
-  <div id="chopstick_chart" />
+    <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+            <div class="posts">
+                <section class="post">
+                    <header class="post-header">
 
+                        <p class="post-meta">
+                            By <a href="https://github.com/jacobjiggler" class="post-author">Jacob Martin</a> under <a class="post-category post-category-design" href="#">Javascript</a> <a class="post-category post-category-pure" href="#">D3</a>
+                        </p>
+                    </header>
 
-<script>
-//Width and height
-  var w = 1000;
-  var h = 400;
-  var barPadding = 1;
+                    <div class="post-description">
+                        <p>
+                          <div>
+                          <p>
+                            This graph shows the efficiency of different chopstick lengths. <b>To see results at different lengths use the buttons below or left and right arrows.</b>
+                            Efficiency was measured by amount of peanuts picked up and dropped in a cup.
+                          </br>
+                          Props to pure.css for the layout and button css
+                          </p>
+                        </div>
 
-  var stickIndex = 0;
-  var datasetLength = 31;
-
-
-    var barWidth = Math.floor(w / 31) - 1;
-    var xScale = d3.scale.linear()
-        .range([barWidth / 2, w - barWidth / 2]);
-
-    var yScale = d3.scale.linear()
-        .range([h, 10])
-        .domain([10,40]);
-
-        //Define Y axis
-    var yAxis = d3.svg.axis()
-                      .scale(yScale)
-                      .orient("right")
-                      .ticks(20);
-
-  poly = [{"x":65, "y":39.5},
-          {"x":65,"y":37.5},
-          {"x":105+ 40*(stickIndex/5),"y":38.0},
-          {"x":105 + 40*(stickIndex/5),"y":39.0},
-
-          ];
-
-  poly2 = [{"x":65, "y":36.5},
-          {"x":65,"y":34.5},
-          {"x":105,"y":35.0},
-          {"x":105,"y":36.0}];
-  var temp = [];
-  var efficiency = [];
-  d3.csv("chopstick-reformatted3.csv", function(error, data) {
-    var i = 0;
-    var a = [];
-    efficiency  = Array.apply(null, Array(6)).map(Number.prototype.valueOf,0);
-    data.forEach(function(d) {
-      d.efficiency = +d.efficiency;
-      d.chopLength = +d.chopLength;
-      d.individual = +d.individual;
-      efficiency[Math.floor(i/31)]+=d.efficiency
-      a.push(d);
-      i++;
-      if ((i % 31) == 0){
-        temp.push(a);
-        a = [];
-        efficiency[i/31 - 1] = Math.floor(efficiency[i/31 - 1]/31)
-      }
-    });
-    var svg;
-    var title;
-    var avg;
-    init();
-  });
-
-  function init() {
-            //Create SVG element
-  	      svg = d3.select("#chopstick_chart")
-  				.append("svg")
-  				.attr("width", w + 180)
-  				.attr("height", h + 180);
-          // A label for the current chopLength.
-    title = svg.append("text")
-        .attr("class", "title")
-        .attr("y", 70)
-        .attr("x", 0)
-        .text(180 + "MM");
+                        </br>
+                          <div id="chopstick_chart" />
 
 
-    avg = svg.append("text")
-        .attr("class", "avg")
-        .attr("y", h + 50)
-        .attr("x", w - 100)
-        .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
+                          <script>
+                          //Width and height
+                          var w = 1000;
+                          var h = 400;
+                          var barPadding = 1;
 
-  	svg.selectAll("rect")
-        .data(temp[stickIndex])
-  	   .enter()
-  	   .append("rect")
-  	   .attr("x", function(d, i) {
-  	   		return i * (w / datasetLength) + 60;
-  	   })
-  	   .attr("y", function(d) {
-  	   		return h - ((d.efficiency - 10) * 14);
-  	   })
-  	   .attr("width", w / datasetLength - barPadding)
-  	   .attr("height", function(d) {
-  	   		return (d.efficiency - 10) * 14;
-  	   })
-  	   .attr("fill", function(d) {
-  			return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
-  	   });
-
-  	svg.selectAll("text")
-        .data(temp[stickIndex])
-  	   .enter()
-  	   .append("text")
-  	   .text(function(d) {
-  	   		return d.individual;
-  	   })
-  	   .attr("text-anchor", "middle")
-  	   .attr("x", function(d, i) {
-  	   		return i * (w / datasetLength) + (w / datasetLength - barPadding) / 2 + 60;
-  	   })
-  	   .attr("y", function(d) {
-  	   		return h + 12;
-  	   })
-  	   .attr("font-family", "sans-serif")
-  	   .attr("font-size", "11px")
-  	   .attr("fill", "black");
-
-       svg.append("text")      // text label for the y axis
-           .attr("x", w + 130 )
-           .attr("y",  200 )
-           .style("text-anchor", "middle")
-           .text("Chopstick");
-       svg.append("text")      // text label for the y axis
-           .attr("x", w + 130 )
-           .attr("y",  220 )
-           .style("text-anchor", "middle")
-           .text("Efficiency");
-         svg.append("text")      // text label for the x axis
-             .attr("x", w / 2 + 30)
-             .attr("y",  h + 50 )
-             .style("text-anchor", "middle")
-             .text("Test Subject #");
-       var yAxisGroup = svg.append("g")
-         .attr("class", "axis")
-         .attr("transform", "translate(" + (w +70) + ",0)")
-         .call(yAxis);
-
-         svg.selectAll("polygon")
-       .data([poly,poly2])
-     .enter().append("polygon")
-       .attr("points",function(d) {
-           return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
-       .attr("stroke","grey")
-       .attr("fill", "#EBCD77")
-       .attr("stroke-width",2);
-
-       // Allow the arrow keys to change the displayed chopLength.
-       window.focus();
-       d3.select(window).on("keydown", function() {
-         switch (d3.event.keyCode) {
-           case 37: decrement(); break;
-           case 39: increment(); break;
-         }
-
-       });
-     };
-     function decrement() {
-       stickIndex--; redraw();
-     }
-     function increment() {
-       stickIndex++; redraw();
-     }
-     function redraw() {
-       if (stickIndex < 0){
-         stickIndex = 0;
-       }
-       if (stickIndex > 5){
-         stickIndex = 5;
-       }
-
-       poly = [{"x":65, "y":39.5},
-               {"x":65,"y":37.5},
-               {"x":105+ 40*(stickIndex/5),"y":38.0},
-               {"x":105 + 40*(stickIndex/5),"y":39.0},
-
-               ];
-
-       poly2 = [{"x":65, "y":36.5},
-               {"x":65,"y":34.5},
-               {"x":105 + 40*(stickIndex/5),"y":35.0},
-               {"x":105 + 40*(stickIndex/5),"y":36.0}];
+                          var stickIndex = 0;
+                          var datasetLength = 31;
 
 
-       svg.selectAll("rect")
-       .data(temp[stickIndex])
-     	   .attr("x", function(d, i) {
-     	   		return i * (w / datasetLength)  + 60;
-     	   })
-     	   .attr("y", function(d) {
-     	   		return h - ((d.efficiency - 10) * 14);
-     	   })
-     	   .attr("width", w / datasetLength - barPadding)
-     	   .attr("height", function(d) {
-     	   		return (d.efficiency - 10) * 14;
-     	   })
-     	   .attr("fill", function(d) {
-            return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
-     	   });
+                            var barWidth = Math.floor(w / 31) - 1;
+                            var xScale = d3.scale.linear()
+                                .range([barWidth / 2, w - barWidth / 2]);
 
-     	svg.selectAll("text")
-       .data(temp[stickIndex])
-     	   .text(function(d) {
-     	   		return d.individual;
-     	   })
-     	   .attr("text-anchor", "middle")
-     	   .attr("x", function(d, i) {
-     	   		return i * (w / datasetLength) + (w / datasetLength - barPadding) / 2 + 60;
-     	   })
-     	   .attr("y", function(d) {
-     	   		return h + 12;
-     	   })
-     	   .attr("font-family", "sans-serif")
-     	   .attr("font-size", "11px")
-     	   .attr("fill", "black");
+                            var yScale = d3.scale.linear()
+                                .range([h, 10])
+                                .domain([10,40]);
 
-          svg.selectAll("polygon")
-        .data([poly,poly2])
-        .attr("points",function(d) {
-            return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
-        .attr("stroke","grey")
-        .attr("fill", "#EBCD77")
-        .attr("stroke-width",2);
+                                //Define Y axis
+                            var yAxis = d3.svg.axis()
+                                              .scale(yScale)
+                                              .orient("right")
+                                              .ticks(20);
 
-        title
-         .transition()
-         .text((temp[stickIndex][0]).chopLength + "MM")
-         .attr("y", 70)
-         .attr("x", 150);
+                          poly = [{"x":65, "y":39.5},
+                                  {"x":65,"y":37.5},
+                                  {"x":105+ 40*(stickIndex/5),"y":38.0},
+                                  {"x":105 + 40*(stickIndex/5),"y":39.0},
 
-         avg
-           .transition()
-           .attr("class", "avg")
-           .attr("y", h + 50)
-           .attr("x", w - 100)
-           .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
-   };
+                                  ];
 
-  </script>
-  <div>
-  <p>
-    This graph shows the efficiency of different chopstick lengths. <b>To see results at different lengths use the buttons below or left and right arrows.</b>
-    Efficiency was measured by amount of peanuts picked up and dropped in a cup.
-  </p>
+                          poly2 = [{"x":65, "y":36.5},
+                                  {"x":65,"y":34.5},
+                                  {"x":105,"y":35.0},
+                                  {"x":105,"y":36.0}];
+                          var temp = [];
+                          var efficiency = [];
+                          d3.csv("chopstick-reformatted3.csv", function(error, data) {
+                            var i = 0;
+                            var a = [];
+                            efficiency  = Array.apply(null, Array(6)).map(Number.prototype.valueOf,0);
+                            data.forEach(function(d) {
+                              d.efficiency = +d.efficiency;
+                              d.chopLength = +d.chopLength;
+                              d.individual = +d.individual;
+                              efficiency[Math.floor(i/31)]+=d.efficiency
+                              a.push(d);
+                              i++;
+                              if ((i % 31) == 0){
+                                temp.push(a);
+                                a = [];
+                                efficiency[i/31 - 1] = Math.floor(efficiency[i/31 - 1]/31)
+                              }
+                            });
+                            var svg;
+                            var title;
+                            var avg;
+                            init();
+                          });
+
+                          function init() {
+                                    //Create SVG element
+                                  svg = d3.select("#chopstick_chart")
+                                  .append("svg")
+                                  .attr("width", w + 180)
+                                  .attr("height", h + 180);
+                                  // A label for the current chopLength.
+                            title = svg.append("text")
+                                .attr("class", "title")
+                                .attr("y", 70)
+                                .attr("x", 0)
+                                .text(180 + "MM");
+
+
+                            avg = svg.append("text")
+                                .attr("class", "avg")
+                                .attr("y", h + 50)
+                                .attr("x", w - 100)
+                                .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
+
+                            svg.selectAll("rect")
+                                .data(temp[stickIndex])
+                               .enter()
+                               .append("rect")
+                               .attr("x", function(d, i) {
+                                   return i * (w / datasetLength) + 60;
+                               })
+                               .attr("y", function(d) {
+                                   return h - ((d.efficiency - 10) * 14);
+                               })
+                               .attr("width", w / datasetLength - barPadding)
+                               .attr("height", function(d) {
+                                   return (d.efficiency - 10) * 14;
+                               })
+                               .attr("fill", function(d) {
+                                return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
+                               });
+
+                            svg.selectAll("text")
+                                .data(temp[stickIndex])
+                               .enter()
+                               .append("text")
+                               .text(function(d) {
+                                   return d.individual;
+                               })
+                               .attr("text-anchor", "middle")
+                               .attr("x", function(d, i) {
+                                   return i * (w / datasetLength) + (w / datasetLength - barPadding) / 2 + 60;
+                               })
+                               .attr("y", function(d) {
+                                   return h + 12;
+                               })
+                               .attr("font-family", "sans-serif")
+                               .attr("font-size", "11px")
+                               .attr("fill", "black");
+
+                               svg.append("text")      // text label for the y axis
+                                   .attr("x", w + 130 )
+                                   .attr("y",  200 )
+                                   .style("text-anchor", "middle")
+                                   .text("Chopstick");
+                               svg.append("text")      // text label for the y axis
+                                   .attr("x", w + 130 )
+                                   .attr("y",  220 )
+                                   .style("text-anchor", "middle")
+                                   .text("Efficiency");
+                                 svg.append("text")      // text label for the x axis
+                                     .attr("x", w / 2 + 30)
+                                     .attr("y",  h + 50 )
+                                     .style("text-anchor", "middle")
+                                     .text("Test Subject #");
+                               var yAxisGroup = svg.append("g")
+                                 .attr("class", "axis")
+                                 .attr("transform", "translate(" + (w +70) + ",0)")
+                                 .call(yAxis);
+
+                                 svg.selectAll("polygon")
+                               .data([poly,poly2])
+                             .enter().append("polygon")
+                               .attr("points",function(d) {
+                                   return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
+                               .attr("stroke","grey")
+                               .attr("fill", "#EBCD77")
+                               .attr("stroke-width",2);
+
+                               // Allow the arrow keys to change the displayed chopLength.
+                               window.focus();
+                               d3.select(window).on("keydown", function() {
+                                 switch (d3.event.keyCode) {
+                                   case 37: decrement(); break;
+                                   case 39: increment(); break;
+                                 }
+
+                               });
+                             };
+                             function decrement() {
+                               stickIndex--; redraw();
+                             }
+                             function increment() {
+                               stickIndex++; redraw();
+                             }
+                             function redraw() {
+                               if (stickIndex < 0){
+                                 stickIndex = 0;
+                               }
+                               if (stickIndex > 5){
+                                 stickIndex = 5;
+                               }
+
+                               poly = [{"x":65, "y":39.5},
+                                       {"x":65,"y":37.5},
+                                       {"x":105+ 40*(stickIndex/5),"y":38.0},
+                                       {"x":105 + 40*(stickIndex/5),"y":39.0},
+
+                                       ];
+
+                               poly2 = [{"x":65, "y":36.5},
+                                       {"x":65,"y":34.5},
+                                       {"x":105 + 40*(stickIndex/5),"y":35.0},
+                                       {"x":105 + 40*(stickIndex/5),"y":36.0}];
+
+
+                               svg.selectAll("rect")
+                               .data(temp[stickIndex])
+                                  .attr("x", function(d, i) {
+                                      return i * (w / datasetLength)  + 60;
+                                  })
+                                  .attr("y", function(d) {
+                                      return h - ((d.efficiency - 10) * 14);
+                                  })
+                                  .attr("width", w / datasetLength - barPadding)
+                                  .attr("height", function(d) {
+                                      return (d.efficiency - 10) * 14;
+                                  })
+                                  .attr("fill", function(d) {
+                                    return "hsl(319, 69%, " + (81 - ((d.efficiency - 18) * 2.5)) + "%)";
+                                  });
+
+                               svg.selectAll("text")
+                               .data(temp[stickIndex])
+                                  .text(function(d) {
+                                      return d.individual;
+                                  })
+                                  .attr("text-anchor", "middle")
+                                  .attr("x", function(d, i) {
+                                      return i * (w / datasetLength) + (w / datasetLength - barPadding) / 2 + 60;
+                                  })
+                                  .attr("y", function(d) {
+                                      return h + 12;
+                                  })
+                                  .attr("font-family", "sans-serif")
+                                  .attr("font-size", "11px")
+                                  .attr("fill", "black");
+
+                                  svg.selectAll("polygon")
+                                .data([poly,poly2])
+                                .attr("points",function(d) {
+                                    return d.map(function(d) { return [xScale(d.x/140),yScale(d.y)].join(","); }).join(" ");})
+                                .attr("stroke","grey")
+                                .attr("fill", "#EBCD77")
+                                .attr("stroke-width",2);
+
+                                title
+                                 .transition()
+                                 .text((temp[stickIndex][0]).chopLength + "MM")
+                                 .attr("y", 70)
+                                 .attr("x", 150);
+
+                                 avg
+                                   .transition()
+                                   .attr("class", "avg")
+                                   .attr("y", h + 50)
+                                   .attr("x", w - 100)
+                                   .text("Average Chopstick Effectiveness: " + efficiency[stickIndex]);
+                           };
+
+                          </script>                        </p>
+                    </div>
+                    <div>
+                      <input
+                              class="pure-button"
+                              name="updateButton"
+                             type="button"
+                             value="Smaller!"
+                             onclick="decrement()" />
+                      <input
+                            class="pure-button"
+                            name="updateButton"
+                             type="button"
+                             value="Larger!"
+                             onclick="increment()" />
+                    </div>
+                </section>
+            </div>
+
+
+
+            <div class="footer">
+                <div class="pure-menu pure-menu-horizontal">
+                    <ul>
+                        <li class="pure-menu-item"><a href="https://github.com/jacobjiggler" class="pure-menu-link">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-  <input
-          class="pure-button"
-          name="updateButton"
-         type="button"
-         value="Smaller!"
-         onclick="decrement()" />
-  <input
-        class="pure-button"
-        name="updateButton"
-         type="button"
-         value="Larger!"
-         onclick="increment()" />
-</div>
-</br>
+
+
+
+
+
+
 </body>
-
 </html>
